@@ -1,0 +1,37 @@
+{
+  "family": "aci-contract-analyzer",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::866543941893:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::866543941893:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "contract-analyzer-service",
+      "image": "866543941893.dkr.ecr.us-east-1.amazonaws.com/aci-contract-analyzer-service:latest",
+      "portMappings": [{ "containerPort": 8083, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "SERVER_PORT", "value": "8083" },
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "prod" },
+        { "name": "MOCK_CORE_URL", "value": "http://aci-mock-core:8084" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/aci-contract-analyzer",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8083/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}

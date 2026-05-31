@@ -1,0 +1,44 @@
+# ── Java / Maven ──────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+
+# ── Node / Angular ────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+.npm/
+npm-debug.log*
+
+# ── Lambda ────────────────────────────────────────────────
+lambda-contract-scan/node_modules/
+
+# ── IDE ───────────────────────────────────────────────────
+.idea/
+*.iws
+*.iml
+*.ipr
+.classpath
+.project
+.settings/
+.factorypath
+.vscode/
+
+# ── OS ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── AWS / secrets ─────────────────────────────────────────
+*.pem
+*.key
+.env
+.env.local
+.env.*.local
+aws-credentials

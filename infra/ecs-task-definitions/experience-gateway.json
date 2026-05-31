@@ -1,0 +1,37 @@
+{
+  "family": "aci-experience-gateway",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::866543941893:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::866543941893:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "experience-gateway",
+      "image": "866543941893.dkr.ecr.us-east-1.amazonaws.com/aci-experience-gateway:latest",
+      "portMappings": [{ "containerPort": 8082, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "SERVER_PORT", "value": "8082" },
+        { "name": "SPRING_PROFILES_ACTIVE", "value": "prod" },
+        { "name": "AUTH_SERVICE_URL", "value": "http://aci-auth:8081" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/aci-experience-gateway",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8082/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
