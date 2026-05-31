@@ -72,3 +72,9 @@ docker compose up --build
 - No real credentials, company names, or internal endpoints are used.
 - All payloads and repository references are mock examples.
 - The sample repositories are intentionally small and deterministic for demos.
+
+## Deployment And Test Docs
+
+- AWS account connection steps: `docs/aws-connect-steps.md`
+- AWS deployment guide: `docs/aws-deployment.md`
+- Local and post-deploy test plan: `docs/test-plan.md`
