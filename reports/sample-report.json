@@ -1,0 +1,7 @@
+{
+  "executiveSummary": "A critical upstream API drift removes a balance field and renames the scheduled payment date field.",
+  "severity": "CRITICAL",
+  "impactedComponents": ["frontend", "backend", "core-system", "agent-tools-service"],
+  "recommendedActions": ["Preserve compatibility alias", "Restore missing field or version the contract", "Run focused regression validation"],
+  "confidenceScore": 96
+}

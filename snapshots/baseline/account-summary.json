@@ -1,0 +1,10 @@
+{
+  "accountId": "ACC-1001",
+  "status": "ACTIVE",
+  "currentAccountValue": 18500.5,
+  "outstandingLoanAmount": 2500.0,
+  "nextPaymentDate": "2026-06-15",
+  "loanDetails": {
+    "loanType": "STANDARD"
+  }
+}

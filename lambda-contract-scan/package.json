@@ -1,0 +1,6 @@
+{
+  "name": "lambda-contract-scan",
+  "private": true,
+  "type": "module",
+  "main": "index.js"
+}

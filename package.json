@@ -1,0 +1,17 @@
+{
+  "name": "agentic-contract-intelligence",
+  "private": true,
+  "workspaces": [
+    "frontend-impact-center",
+    "auth-service",
+    "experience-gateway",
+    "contract-analyzer-service",
+    "mock-core-system",
+    "agent-tools-service",
+    "lambda-contract-scan"
+  ],
+  "scripts": {
+    "demo": "echo Run docker compose up --build",
+    "scan": "echo Trigger mock contract scan"
+  }
+}

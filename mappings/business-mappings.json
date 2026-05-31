@@ -1,0 +1,52 @@
+[
+  {
+    "field": "currentAccountValue",
+    "businessCapability": "Portfolio valuation",
+    "uiComponent": "account-summary.component.ts",
+    "backendService": "AccountService.java",
+    "userImpact": "Balance visibility remains available.",
+    "qaRecommendation": "Verify numeric precision and display formatting.",
+    "fallbackStrategy": "Show cached value with freshness note.",
+    "criticality": "HIGH"
+  },
+  {
+    "field": "outstandingLoanAmount",
+    "businessCapability": "Loan servicing",
+    "uiComponent": "payment-widget.component.ts",
+    "backendService": "AccountResponse.java",
+    "userImpact": "Missing balance context can affect payment decisions.",
+    "qaRecommendation": "Test empty states and alerting behavior.",
+    "fallbackStrategy": "Display unavailable state and support guidance.",
+    "criticality": "CRITICAL"
+  },
+  {
+    "field": "nextPaymentDate",
+    "businessCapability": "Payment scheduling",
+    "uiComponent": "loan-details.component.ts",
+    "backendService": "AccountMapper.java",
+    "userImpact": "Payment reminders depend on this date.",
+    "qaRecommendation": "Validate date parsing and overdue states.",
+    "fallbackStrategy": "Resolve upcomingPaymentDate when present.",
+    "criticality": "HIGH"
+  },
+  {
+    "field": "upcomingPaymentDate",
+    "businessCapability": "Payment scheduling",
+    "uiComponent": "loan-details.component.ts",
+    "backendService": "CoreSystemClient.java",
+    "userImpact": "Renamed field must preserve business meaning.",
+    "qaRecommendation": "Run alias and contract compatibility tests.",
+    "fallbackStrategy": "Accept both field names during transition.",
+    "criticality": "HIGH"
+  },
+  {
+    "field": "loanDetails",
+    "businessCapability": "Loan context",
+    "uiComponent": "loan-details.component.ts",
+    "backendService": "AccountController.java",
+    "userImpact": "Nested loan context powers servicing guidance.",
+    "qaRecommendation": "Verify nested rendering and null handling.",
+    "fallbackStrategy": "Show a lightweight fallback summary.",
+    "criticality": "MEDIUM"
+  }
+]
