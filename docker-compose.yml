@@ -3,8 +3,12 @@ services:
     image: node:22-alpine
     working_dir: /workspace/frontend-impact-center
     volumes:
-      - ./:/workspace
-    command: sh -c "npm install && npm run start"
+      - ./frontend-impact-center:/workspace/frontend-impact-center
+    environment:
+      - CI=true
+      - NG_CLI_ANALYTICS=false
+      - NPM_CONFIG_WORKSPACES=false
+    command: sh -c "cd /workspace/frontend-impact-center && npm install --workspaces=false && npm run start -- --no-interactive"
     ports:
       - "4200:4200"
     depends_on:
