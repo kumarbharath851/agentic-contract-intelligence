@@ -2,5 +2,8 @@
   "name": "lambda-contract-scan",
   "private": true,
   "type": "module",
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.822.0"
+  }
 }

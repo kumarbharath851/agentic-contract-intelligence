@@ -125,11 +125,56 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lambda-zip
-      - run: |
-          aws lambda update-function-code \
+      - name: Create or update Lambda scanner
+        run: |
+          ROLE_ARN="arn:aws:iam::${AWS_ACCOUNT}:role/aci-lambda-contract-scan-role"
+          if aws lambda get-function --function-name aci-contract-scan --region $AWS_REGION >/dev/null 2>&1; then
+            aws lambda update-function-code \
+              --function-name aci-contract-scan \
+              --zip-file fileb://lambda-contract-scan.zip \
+              --region $AWS_REGION
+          else
+            aws lambda create-function \
+              --function-name aci-contract-scan \
+              --runtime nodejs22.x \
+              --handler index.handler \
+              --zip-file fileb://lambda-contract-scan.zip \
+              --role $ROLE_ARN \
+              --timeout 30 \
+              --memory-size 256 \
+              --region $AWS_REGION
+          fi
+
+      - name: Configure Lambda environment
+        run: |
+          aws lambda update-function-configuration \
             --function-name aci-contract-scan \
-            --zip-file fileb://lambda-contract-scan.zip \
-            --region $AWS_REGION || echo "Lambda function not yet created — skipping"
+            --region $AWS_REGION \
+            --environment "Variables={ADMIN_API_URL=http://mock-core-system:8080/api/core/snapshots,EMAIL_TO=bharathkumarnoora@gmail.com,EMAIL_FROM=bharathkumarnoora@gmail.com,BASELINE_PATH=./baseline-policy-response.json,IMPACT_MAP_PATH=./code-impact-map.json}"
+
+      - name: Configure EventBridge schedule
+        run: |
+          aws events put-rule \
+            --name aci-agentcore-drift-scan \
+            --schedule-expression "rate(5 minutes)" \
+            --state ENABLED \
+            --description "Run agentcore drift scan for life insurance policy API" \
+            --region $AWS_REGION
+
+          FUNCTION_ARN=$(aws lambda get-function --function-name aci-contract-scan --region $AWS_REGION --query 'Configuration.FunctionArn' --output text)
+
+          aws events put-targets \
+            --rule aci-agentcore-drift-scan \
+            --region $AWS_REGION \
+            --targets "Id"="aci-contract-scan-target","Arn"="$FUNCTION_ARN"
+
+          aws lambda add-permission \
+            --function-name aci-contract-scan \
+            --statement-id aci-agentcore-drift-scan-invoke \
+            --action lambda:InvokeFunction \
+            --principal events.amazonaws.com \
+            --source-arn "arn:aws:events:${AWS_REGION}:${AWS_ACCOUNT}:rule/aci-agentcore-drift-scan" \
+            --region $AWS_REGION || true
 
       # Update ECS services (force new deployment)
       - name: Update ECS services

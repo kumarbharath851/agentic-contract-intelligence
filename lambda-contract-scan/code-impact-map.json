@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "layer": "frontend",
+      "file": "sample-repositories/frontend-repository/src/app/account-summary.ts",
+      "fields": [
+        "currentAccountValue",
+        "nextPaymentDate",
+        "upcomingPaymentDate"
+      ],
+      "rationale": "UI renders balance and payment date from admin response."
+    },
+    {
+      "layer": "backend",
+      "file": "sample-repositories/backend-repository/src/main/java/com/example/aci/backend/AccountController.java",
+      "fields": [
+        "currentAccountValue",
+        "nextPaymentDate",
+        "upcomingPaymentDate"
+      ],
+      "rationale": "Backend response contract currently emits baseline field names."
+    }
+  ]
+}

@@ -10,6 +10,7 @@ set -euo pipefail
 ACCOUNT="866543941893"
 REGION="us-east-1"
 CLUSTER="aci-cluster"
+LAMBDA_ROLE_NAME="aci-lambda-contract-scan-role"
 
 SERVICES=(
   auth-service
@@ -71,6 +72,57 @@ for SVC in auth-service experience-gateway contract-analyzer-service mock-core-s
     --query "taskDefinition.taskDefinitionArn" --output text
   echo "  Registered task def for ${SVC}"
 done
+
+echo ""
+echo "=== 6. Create Lambda execution role for agentcore scan ==="
+cat > /tmp/aci-lambda-trust.json <<'JSON'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Service": "lambda.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+JSON
+
+aws iam create-role \
+  --role-name "$LAMBDA_ROLE_NAME" \
+  --assume-role-policy-document file:///tmp/aci-lambda-trust.json \
+  --query "Role.Arn" --output text 2>/dev/null \
+  && echo "  Created $LAMBDA_ROLE_NAME" \
+  || echo "  $LAMBDA_ROLE_NAME already exists — skipped"
+
+aws iam attach-role-policy \
+  --role-name "$LAMBDA_ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole \
+  2>/dev/null \
+  && echo "  Attached AWSLambdaBasicExecutionRole" \
+  || echo "  AWSLambdaBasicExecutionRole already attached or role missing"
+
+cat > /tmp/aci-lambda-inline-policy.json <<'JSON'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+JSON
+
+aws iam put-role-policy \
+  --role-name "$LAMBDA_ROLE_NAME" \
+  --policy-name AciLambdaSesSend \
+  --policy-document file:///tmp/aci-lambda-inline-policy.json \
+  && echo "  Applied inline SES send policy to $LAMBDA_ROLE_NAME"
 
 echo ""
 echo "=== Bootstrap complete ==="

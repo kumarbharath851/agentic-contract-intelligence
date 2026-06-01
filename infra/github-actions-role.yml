@@ -50,10 +50,23 @@ Resources:
               # Lambda
               - Effect: Allow
                 Action:
+                  - lambda:CreateFunction
+                  - lambda:UpdateFunctionConfiguration
                   - lambda:UpdateFunctionCode
                   - lambda:GetFunction
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
                   - lambda:PublishVersion
                 Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:aci-*"
+              # EventBridge schedule for agentcore scan
+              - Effect: Allow
+                Action:
+                  - events:PutRule
+                  - events:PutTargets
+                  - events:DescribeRule
+                  - events:EnableRule
+                  - events:DisableRule
+                Resource: !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/aci-agentcore-drift-scan"
               # CloudWatch Logs (ECS tasks write here)
               - Effect: Allow
                 Action:
@@ -66,6 +79,7 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
                   - !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskRole"
+                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/aci-lambda-contract-scan-role"
 
 Outputs:
   RoleArn:
