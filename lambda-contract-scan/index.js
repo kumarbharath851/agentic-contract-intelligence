@@ -153,13 +153,22 @@ async function sendNotificationEmail(report) {
     }
   });
 
-  const response = await ses.send(command);
-  return {
-    notificationStatus: 'EMAIL_SENT',
-    messageId: response.MessageId,
-    to: EMAIL_TO,
-    from: EMAIL_FROM
-  };
+  try {
+    const response = await ses.send(command);
+    return {
+      notificationStatus: 'EMAIL_SENT',
+      messageId: response.MessageId,
+      to: EMAIL_TO,
+      from: EMAIL_FROM
+    };
+  } catch (error) {
+    return {
+      notificationStatus: 'EMAIL_FAILED',
+      to: EMAIL_TO,
+      from: EMAIL_FROM,
+      reason: error.message
+    };
+  }
 }
 
 export const handler = async (event = {}) => {
