@@ -18,12 +18,31 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.css"]
-          }
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "impact-center:build"
+            "buildTarget": "impact-center:build:development"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "impact-center:build:production"
+            },
+            "development": {
+              "buildTarget": "impact-center:build:development"
+            }
           }
         }
       }
